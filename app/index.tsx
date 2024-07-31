@@ -1,5 +1,5 @@
 import Board from "@/components/(board)/Board";
-import { Text, View } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 
 import BoardScreen from "@/screens/BoardScreen";
 import StartScreen from "@/screens/StartScreen";
@@ -10,9 +10,18 @@ const Stack = createStackNavigator();
 
 export default function Index() {
   return (
+    <View style={styles.container}>
+
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Board" component={BoardScreen} />
       </Stack.Navigator>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

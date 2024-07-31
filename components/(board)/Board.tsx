@@ -13,6 +13,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
+import { useNavigation } from "expo-router";
+import { NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "@/utils/types";
 
 const { width, height } = Dimensions.get("window");
 const snakeSegmentSize = 20;
@@ -20,7 +23,9 @@ const snakeSegmentSize = 20;
 const Board = () => {
   const [data, setData] = useState({ x: 0, y: 0, z: 0 });
 
-  const [gameRunning, setGameRunning] = useState<boolean>(false);
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  const [gameRunning, setGameRunning] = useState<boolean>(true);
 
   const [startingX, setStartingX] = useState<number | null>(null);
   const [startingY, setStartingY] = useState<number | null>(null);
@@ -83,7 +88,7 @@ const Board = () => {
             let newY = segment.y;
 
             console.log(newX);
-            if (newX < 0 || newY === 0) {
+            if (newX < 0 || newX > width || newY < 0 || newY > height) {
               setGameRunning(false);
             }
 
@@ -131,9 +136,15 @@ const Board = () => {
     }
   }, [x, y]);
 
+  useEffect(() => {
+    if (gameRunning === false){
+      navigation.navigate("Start")
+    }
+  },[gameRunning])
+
   return (
     <View style={styles.container}>
-      <Svg width={width} height={height}>
+      <Svg width={width * 0.9} height={height* 0.9} >
         {snake.map((segment, index) => (
           <Rect
             x={segment.x}
@@ -145,7 +156,7 @@ const Board = () => {
           />
         ))}
       </Svg>
-
+        <Text>({snake[0].x},{snake[0].y}) | {width}, {height}</Text>
       <Animated.View style={[styles.snake, animatedStyle]}></Animated.View>
     </View>
   );
@@ -158,7 +169,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: width,
     height: height,
-    backgroundColor: "white",
+    backgroundColor: "pink",
+    borderWidth: 1,
+    borderColor: "red"
   },
   snake: {
     position: "absolute",
