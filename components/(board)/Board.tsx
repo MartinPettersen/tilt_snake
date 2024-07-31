@@ -19,17 +19,25 @@ import { RootStackParamList } from "@/utils/types";
 
 const { width, height } = Dimensions.get("window");
 const snakeSegmentSize = 20;
+const foodSize = 10;
+const eatingZone = 10;
+
 
 const Board = () => {
   const [data, setData] = useState({ x: 0, y: 0, z: 0 });
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
+  const [score, setScore] = useState(0)
+
   const [gameRunning, setGameRunning] = useState<boolean>(true);
 
   const [startingX, setStartingX] = useState<number | null>(null);
   const [startingY, setStartingY] = useState<number | null>(null);
   const [direction, setDirection] = useState<string>("right");
+
+  const [randomX, setRandomX] = useState(Math.floor(Math.random() * (width -100)));
+  const [randomY, setRandomY] = useState(Math.floor(Math.random() * (height - 20)));
 
   const [snake, setSnake] = useState<{ x: number; y: number }[]>([
     { x: width / 2, y: height / 2 },
@@ -87,9 +95,16 @@ const Board = () => {
             let newX = segment.x;
             let newY = segment.y;
 
-            console.log(newX);
-            if (newX < 0 || newX > (width) || newY < 0 || newY > height) {
+            if (newX < 0 || newX > width || newY < 0 || newY > height) {
               setGameRunning(false);
+            }
+
+            if((newX >= (randomX -eatingZone) && newX <= (randomX + eatingZone)) && (newY >= (randomY -eatingZone) && newY <= (randomY + eatingZone)) ){
+              setScore(score + 1)
+              console.log("nom nom")
+
+              setRandomX(Math.floor(Math.random() * (width -100)))
+              setRandomY(Math.floor(Math.random() * (height -30)))
             }
 
             if (direction === "up") {
@@ -137,14 +152,14 @@ const Board = () => {
   }, [x, y]);
 
   useEffect(() => {
-    if (gameRunning === false){
-      navigation.navigate("Start")
+    if (gameRunning === false) {
+      navigation.navigate("Start");
     }
-  },[gameRunning])
+  }, [gameRunning]);
 
   return (
     <View style={styles.container}>
-      <Svg width={width * 0.9} height={height* 0.9} >
+      <Svg width={width * 0.9} height={height * 0.9}>
         {snake.map((segment, index) => (
           <Rect
             x={segment.x}
@@ -155,8 +170,17 @@ const Board = () => {
             key={index}
           />
         ))}
+        <Rect
+          x={randomX}
+          y={randomY}
+          width={foodSize}
+          height={foodSize}
+          fill="black"
+        />
       </Svg>
-        <Text>({snake[0].x},{snake[0].y}) | {width}, {height}</Text>
+      <Text>
+        {score}
+      </Text>
       <Animated.View style={[styles.snake, animatedStyle]}></Animated.View>
     </View>
   );
@@ -169,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
     borderWidth: 1,
-    borderColor: "red"
+    borderColor: "red",
   },
   snake: {
     position: "absolute",
