@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Accelerometer } from "expo-sensors";
 import Svg, { Rect } from "react-native-svg";
 import Animated, {
@@ -75,6 +81,12 @@ const Board = () => {
           if (index === 0) {
             let newX = segment.x;
             let newY = segment.y;
+
+            console.log(newX);
+            if (newX < 0 || newY === 0) {
+              setGameRunning(false);
+            }
+
             if (direction === "up") {
               newY += snakeSegmentSize;
             } else if (direction === "down") {
@@ -121,29 +133,20 @@ const Board = () => {
 
   return (
     <View style={styles.container}>
-      {gameRunning?
-      
-      <>
-        <Svg width={width} height={height}>
-          {snake.map((segment, index) => (
-            <Rect
+      <Svg width={width} height={height}>
+        {snake.map((segment, index) => (
+          <Rect
             x={segment.x}
             y={segment.y}
             width={snakeSegmentSize}
             height={snakeSegmentSize}
             fill="black"
             key={index}
-            />
-          ))}
-        </Svg>
+          />
+        ))}
+      </Svg>
 
-        <Animated.View style={[styles.snake, animatedStyle]}></Animated.View>
-      </>
-        :
-      <TouchableOpacity onPress={() => setGameRunning(true)}>
-        <Text>Start a new Game</Text>
-      </TouchableOpacity>
-      }
+      <Animated.View style={[styles.snake, animatedStyle]}></Animated.View>
     </View>
   );
 };
@@ -153,6 +156,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: width,
+    height: height,
+    backgroundColor: "white",
   },
   snake: {
     position: "absolute",
