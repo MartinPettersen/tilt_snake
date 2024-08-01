@@ -19,16 +19,15 @@ import { RootStackParamList } from "@/utils/types";
 
 const { width, height } = Dimensions.get("window");
 const snakeSegmentSize = 20;
-const foodSize = 10;
-const eatingZone = 10;
-
+const foodSize = 15;
+const eatingZone = 15;
 
 const Board = () => {
   const [data, setData] = useState({ x: 0, y: 0, z: 0 });
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const [score, setScore] = useState(0)
+  const [score, setScore] = useState(0);
 
   const [gameRunning, setGameRunning] = useState<boolean>(true);
 
@@ -36,8 +35,12 @@ const Board = () => {
   const [startingY, setStartingY] = useState<number | null>(null);
   const [direction, setDirection] = useState<string>("right");
 
-  const [randomX, setRandomX] = useState(Math.floor(Math.random() * (width -100)));
-  const [randomY, setRandomY] = useState(Math.floor(Math.random() * (height - 20)));
+  const [randomX, setRandomX] = useState(
+    Math.floor(Math.random() * (width - 100))
+  );
+  const [randomY, setRandomY] = useState(
+    Math.floor(Math.random() * (height - 20))
+  );
 
   const [snake, setSnake] = useState<{ x: number; y: number }[]>([
     { x: width / 2, y: height / 2 },
@@ -85,12 +88,11 @@ const Board = () => {
     };
   }, [moveX, moveY]);
 
-  //----------------------------
-
   useEffect(() => {
     const interval = setInterval(() => {
       setSnake((prevSnake) => {
-        const newSnake = prevSnake.map((segment, index) => {
+        let shouldGrow = false;
+        let newSnake = prevSnake.map((segment, index) => {
           if (index === 0) {
             let newX = segment.x;
             let newY = segment.y;
@@ -99,12 +101,19 @@ const Board = () => {
               setGameRunning(false);
             }
 
-            if((newX >= (randomX -eatingZone) && newX <= (randomX + eatingZone)) && (newY >= (randomY -eatingZone) && newY <= (randomY + eatingZone)) ){
-              setScore(score + 1)
-              console.log("nom nom")
+            if (
+              newX >= randomX - eatingZone &&
+              newX <= randomX + eatingZone &&
+              newY >= randomY - eatingZone &&
+              newY <= randomY + eatingZone
+            ) {
+              setScore(score + 1);
+              console.log("nom nom nom");
 
-              setRandomX(Math.floor(Math.random() * (width -100)))
-              setRandomY(Math.floor(Math.random() * (height -30)))
+              setRandomX(Math.floor(Math.random() * (width - 100)));
+              setRandomY(Math.floor(Math.random() * (height - 30)));
+              
+              shouldGrow = true;
             }
 
             if (direction === "up") {
@@ -122,11 +131,19 @@ const Board = () => {
           }
         });
 
+
+        if (shouldGrow) {
+          newSnake.push({
+            x: prevSnake[prevSnake.length - 1].x,
+            y: prevSnake[prevSnake.length - 1].y,
+          })
+        }
+
         moveX.value = newSnake[0].x;
         moveY.value = newSnake[0].y;
         return newSnake;
       });
-    }, 100);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [direction]);
@@ -178,9 +195,7 @@ const Board = () => {
           fill="black"
         />
       </Svg>
-      <Text>
-        {score}
-      </Text>
+      <Text>{score}</Text>
       <Animated.View style={[styles.snake, animatedStyle]}></Animated.View>
     </View>
   );
@@ -199,14 +214,5 @@ const styles = StyleSheet.create({
     position: "absolute",
   },
 });
-
-/*
- <Text>{direction}</Text>
-      <Text>X: {x.toFixed(2)}</Text>
-      {startingX ? <Text>startingX: {startingX!.toFixed(2)}</Text> : null}
-      {startingY ? <Text>startingY: {startingY!.toFixed(2)}</Text> : null}
-      <Text>Y: {y.toFixed(2)}</Text>
-
-      */
 
 export default Board;

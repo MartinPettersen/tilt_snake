@@ -15,7 +15,7 @@ const StartPage = () => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={() => navigation.navigate("Board")} style={{alignItems: "center", justifyContent: "center"}}>
-        <Text>Start</Text>
+        <Text style={styles.text}>Start</Text>
       </TouchableOpacity>
     </View>
   );
@@ -27,8 +27,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
-
   },
+  text: {
+    fontWeight: "bold",
+    fontSize: 30,
+  }
 })
 
 export default StartPage;
