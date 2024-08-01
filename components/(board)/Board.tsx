@@ -92,7 +92,7 @@ const Board = () => {
     const interval = setInterval(() => {
       setSnake((prevSnake) => {
         let shouldGrow = false;
-        let newSnake = prevSnake.map((segment, index) => {
+        const newSnake = prevSnake.map((segment, index) => {
           if (index === 0) {
             let newX = segment.x;
             let newY = segment.y;
@@ -170,7 +170,7 @@ const Board = () => {
 
   useEffect(() => {
     if (gameRunning === false) {
-      navigation.navigate("Start");
+      navigation.navigate("Score", {score: score});
     }
   }, [gameRunning]);
 

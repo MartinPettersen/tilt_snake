@@ -5,6 +5,7 @@ import BoardScreen from "@/screens/BoardScreen";
 import StartScreen from "@/screens/StartScreen";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
+import ScoreScreen from "@/screens/ScoreScreen";
 
 const Stack = createStackNavigator();
 
@@ -15,6 +16,7 @@ export default function Index() {
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Start" component={StartScreen} />
         <Stack.Screen name="Board" component={BoardScreen} />
+        <Stack.Screen name="Score" component={ScoreScreen} />
       </Stack.Navigator>
     </View>
   );
